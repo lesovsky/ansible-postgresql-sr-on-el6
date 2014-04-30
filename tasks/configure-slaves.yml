@@ -1,0 +1,77 @@
+# file: tasks/configure-slaves.yml -- postgresql pre-start configuration of the slave servers and startup
+
+- name: "Stage 3: stop old postgresql service"
+  service: name="postgresql-{{ postgresql_version }}" state=stopped
+  when: postgresql_drop_old_cluster
+
+- name: "Stage 3: remove old postgresql cluster"
+  command: "rm -rf /var/lib/pgsql/{{ postgresql_version }}/data {{ postgresql_cluster_symlink_src }}"
+  when: postgresql_drop_old_cluster
+
+- name: "Stage 3: cluster directory replacement with symlink, check destination directory"
+  file:
+    path: "{{ postgresql_cluster_symlink_src }}"
+    state: directory
+    owner: "{{ postgresql_admin_user }}"
+    group: "{{ postgresql_admin_user }}"
+    mode: 0700
+  when: postgresql_cluster_symlink_src|length > 0
+  
+- name: "Stage 3: cluster directory replacement with symlink, create symlink"
+  file:
+    src: "{{ postgresql_cluster_symlink_src }}"
+    dest: "/var/lib/pgsql/{{ postgresql_version }}/data"
+    state: link
+    owner: "{{ postgresql_admin_user }}"
+    group: "{{ postgresql_admin_user }}"
+  when: postgresql_cluster_symlink_src|length > 0
+
+- name: "Stage 3: write .pgpass for postgres user"
+  shell: "echo '*:*:*:{{ postgresql_streaming_user.name }}:{{ postgresql_streaming_user.pass }}' > ~postgres/.pgpass"
+
+- name: "Stage 3: change permissions on .pgpass"
+  file:
+    path: ~postgres/.pgpass
+    state: file
+    owner: "{{ postgresql_admin_user }}"
+    group: "{{ postgresql_admin_user }}"
+    mode: 0600
+
+- name: "Stage 3: initialize new postgresql cluster"
+  command: "sudo -u postgres pg_basebackup -c fast -X stream -h {{ postgresql_streaming_master }} -U {{ postgresql_streaming_user.name }} -D /var/lib/pgsql/{{ postgresql_version }}/data"
+
+- name: "Stage 3: configure pg_hba.conf"
+  template:
+    src: pg_hba.conf.j2
+    dest: "/var/lib/pgsql/{{ postgresql_version }}/data/pg_hba.conf"
+    owner: "{{ postgresql_admin_user }}"
+    group: "{{ postgresql_admin_user }}"
+    mode: 0640
+
+- name: "Stage 3: configure postgresql.conf"
+  lineinfile:
+    dest: "/var/lib/pgsql/{{ postgresql_version }}/data/postgresql.conf"
+    state: present
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.guc }}"
+  with_items: postgresql_conf_default_guc
+
+- name: "Stage 3: configure recovery.conf"
+  template:
+    src: recovery.conf.j2
+    dest: "/var/lib/pgsql/{{ postgresql_version }}/data/recovery.conf"
+    owner: "{{ postgresql_admin_user }}"
+    group: "{{ postgresql_admin_user }}"
+    mode: 0640
+
+- name: "Stage 3: create postgresql log directory"
+  file:
+    path: "{{ postgresql_log_directory }}"
+    state: directory
+    owner: "{{ postgresql_admin_user }}"
+    group: "{{ postgresql_admin_user }}"
+    mode: 0755
+  when: postgresql_log_directory is defined
+
+- name: "Stage 3: start postgresql service"
+  service: name="postgresql-{{ postgresql_version }}" state=started enabled=yes

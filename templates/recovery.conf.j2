@@ -1,0 +1,3 @@
+standby_mode = 'on'
+primary_conninfo = 'host={{ postgresql_streaming_master }} port=5432 user={{ postgresql_streaming_user.name }}'
+trigger_file = '/var/lib/pgsql/{{ postgresql_version }}/main/failover'

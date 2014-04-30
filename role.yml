@@ -1,0 +1,30 @@
+---
+# Install and setup PostgreSQL Streaming Replication on Enterprise Linux 6 (RHEL/CentOS/Scientific)
+- hosts: all
+  sudo: yes
+  sudo_user: root
+  vars_files:
+    - 'defaults/main.yml'
+    - 'defaults/repo.yml'
+  tasks:
+  - include: 'tasks/install.yml'
+
+- hosts: streaming-master
+  sudo: yes
+  sudo_user: root
+  vars_files:
+    - 'defaults/main.yml'
+    - 'defaults/repo.yml'
+  tasks:
+  - include: 'tasks/configure-master.yml'
+  - include: 'tasks/users.yml'
+  - include: 'tasks/databases.yml'
+
+- hosts: streaming-slaves
+  sudo: yes
+  sudo_user: root
+  vars_files:
+    - 'defaults/main.yml'
+    - 'defaults/repo.yml'
+  tasks:
+  - include: 'tasks/configure-slaves.yml'

@@ -1,0 +1,16 @@
+# file: meta/main.yml
+
+galaxy_info:
+  author: "Alexey Lesovsky"
+  description: A role to install and setup PostgreSQL 9.x Streaming Replication on RedHat/CentOS/Scientific/Oracle Enterprise Linux.
+  license: as-is
+  min_ansible_version: 1.4
+  version: 1.0
+  platforms:
+    - name: EL
+      versions:
+      - 6
+  categories:
+   - database
+   - database:sql
+dependencies: []

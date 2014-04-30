@@ -1,0 +1,7 @@
+# file: inventory -- exmaple inventory file.
+
+[streaming-master]
+vm11-centos65-pgdb      ansible_ssh_host=192.168.122.11 ansible_ssh_user=lesovsky
+
+[streaming-slaves]
+vm12-centos65-pg94devel ansible_ssh_host=192.168.122.12 ansible_ssh_user=lesovsky
