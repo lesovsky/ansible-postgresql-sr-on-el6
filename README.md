@@ -4,7 +4,7 @@ Features:
 - based on [postgresql-on-el6](https://galaxy.ansible.com/list#/roles/766) role.
 - supported distributions: Redhat 6, CentOS 6, Scientific Linux 6.
 - Oracle Linux also supported but uses RHEL repositories.
-- supported PostgreSQL versions: 9.0, 9.1, 9.2, 9.3.
+- supported PostgreSQL versions: 9.0, 9.1, 9.2, 9.3, 9.4.
 - allows specify users, and dedicated replication user and databases which would be created after install.
 - ability to determine a set of postgresql.conf parameters and absense postgresql.conf template. Template is not used due to the fact that the postgresql.conf differs from version to version on a set of parameters.
 - ability to specify another cluster directory and setup symlink into /var/lib/pgsql/x.y/data location.
