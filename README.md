@@ -2,7 +2,7 @@
 
 Features:
 - based on [postgresql-on-el6](https://galaxy.ansible.com/list#/roles/766) role.
-- supported distributions: Redhat 6, CentOS 6, Scientific Linux 6.
+- supported distributions: 6 and 7 versions of Redhat, CentOS, Scientific Linux.
 - Oracle Linux also supported but uses RHEL repositories.
 - supported PostgreSQL versions: 9.0, 9.1, 9.2, 9.3, 9.4.
 - allows specify users, and dedicated replication user and databases which would be created after install.

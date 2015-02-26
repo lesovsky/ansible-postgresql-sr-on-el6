@@ -1,6 +1,7 @@
 # file: defaults/main.yml -- main variables
 
 # Basic settings
+el_version: 7
 postgresql_version: 9.4
 
 # Specify database cluster location in case when /var/lib/pgsq/x.y/data directory should be replaced with symlink.
@@ -13,9 +14,9 @@ postgresql_drop_old_cluster: yes
 postgresql_streaming_user:
   name: replica
   pass: replica1234
-postgresql_streaming_master: 192.168.122.11
+postgresql_streaming_master: 192.168.122.12
 postgresql_streaming_slaves:
- - 192.168.122.12
+ - 192.168.122.13
 
 # Specify a directory for the logs if the default directory does not plan to use
 postgresql_log_directory: /var/log/postgresql
