@@ -1,5 +1,5 @@
 ---
-# Install and setup PostgreSQL Streaming Replication on Enterprise Linux 6 (RHEL/CentOS/Scientific)
+# Install and setup PostgreSQL with Streaming Replication
 - hosts: all
   sudo: yes
   sudo_user: root
