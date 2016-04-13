@@ -32,7 +32,6 @@ postgresql_databases:
  - { name: "db1", owner: "postgres", template: "template0", encoding: "{{ postgresql_encoding }}", collate: "{{ postgresql_locale }}", ctype: "{{ postgresql_locale }}" }
 
 # Extensions which will be installed into databases. This list of extensions will be installed to all databases within postgresql_databases.
-postgresql_contrib: yes
 postgresql_extensions:
  - hstore
  - pg_stat_statements

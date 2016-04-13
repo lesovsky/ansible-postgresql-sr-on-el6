@@ -27,4 +27,3 @@
   yum: 
     state: latest
     pkg: postgresql{{ postgresql_version |replace('.', '') }}-contrib
-  when: postgresql_contrib
