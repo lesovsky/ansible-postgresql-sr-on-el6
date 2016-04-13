@@ -1,7 +1,6 @@
 # file: defaults/main.yml -- main variables
 
 # Basic settings
-el_version: 7
 postgresql_version: 9.4
 
 # Specify database cluster location in case when /var/lib/pgsq/x.y/data directory should be replaced with symlink.
