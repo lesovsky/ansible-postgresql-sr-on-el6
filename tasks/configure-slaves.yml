@@ -2,11 +2,9 @@
 
 - name: "Stage 3: stop old postgresql service"
   service: name="{{ postgresql_service_name }}" state=stopped
-  when: postgresql_drop_old_cluster
 
 - name: "Stage 3: remove old postgresql cluster"
   file: path="{{ postgresql_data_dir }}" state=absent
-  when: postgresql_drop_old_cluster
 
 - name: "Stage 3: cluster directory replacement with symlink, check destination directory"
   file:
@@ -59,7 +57,7 @@
 - name: "Stage 3: configure recovery.conf"
   template:
     src: recovery.conf.j2
-    dest: "{{ postgresql_conf_dir }}/recovery.conf"
+    dest: "{{ postgresql_data_dir }}/recovery.conf"
     owner: "{{ postgresql_admin_user }}"
     group: "{{ postgresql_admin_user }}"
     mode: 0640
