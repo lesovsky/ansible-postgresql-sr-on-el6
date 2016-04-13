@@ -1,0 +1,5 @@
+---
+postgresql_service_name: postgresql-{{ postgresql_version }}
+postgresql_data_dir: /var/lib/postgresql/{{ postgresql_version }}/data
+postgresql_conf_dir: /var/lib/postgresql/{{ postgresql_version }}/data
+postgresql_exec_dir: /usr/pgsql-{{ postgresql_version }}/bin

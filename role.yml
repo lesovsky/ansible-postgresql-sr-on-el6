@@ -16,6 +16,7 @@
     - 'defaults/main.yml'
     - 'defaults/repo.yml'
   tasks:
+  - group_by: key=os_{{ ansible_os_family }}
   - include: 'tasks/configure-master.yml'
   - include: 'tasks/users.yml'
   - include: 'tasks/databases.yml'
