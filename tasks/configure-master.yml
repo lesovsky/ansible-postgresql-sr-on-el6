@@ -26,10 +26,15 @@
     group: "{{ postgresql_admin_user }}"
   when: postgresql_cluster_symlink_src|length > 0
 
+- name: "Stage 2: check cluster directory"
+  stat: path={{ postgresql_data_dir }}
+  register: postgresql_data_stat
+
 - name: "Stage 2: initialize new postgresql cluster"
   sudo: yes
   sudo_user: "{{ postgresql_admin_user }}"
   command: "{{ postgresql_exec_dir }}/initdb -D {{ postgresql_data_dir }}"
+  when: postgresql_data_stat.stat.exists == False
 
 - name: "Stage 2: configure pg_hba.conf"
   template:
