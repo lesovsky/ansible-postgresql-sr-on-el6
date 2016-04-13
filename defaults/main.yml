@@ -7,7 +7,7 @@ postgresql_version: 9.4
 postgresql_cluster_symlink_src: ""
 
 # Stop postgresql service if started and drop cluster if existing.
-postgresql_drop_old_cluster: yes
+postgresql_drop_old_cluster: false
 
 # Enable some options for streaming replication purposes
 postgresql_streaming_user:
