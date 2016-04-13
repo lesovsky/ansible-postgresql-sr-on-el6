@@ -1,20 +1,20 @@
 # file: tasks/users.yml -- manage postgresql roles
 
-- name: "Stage 3. add postgresql roles"
+- name: "Stage 3: add postgresql roles"
   postgresql_user:
     state: present
     name: "{{ item.name }}"
     encrypted: no
     password: "{{ item.pass }}"
     role_attr_flags: "{{ item.flags }}"
-  with_items: postgresql_users
-  when: postgresql_users|length > 0
+  with_items: "{{ postgresql_users }}"
+  when: postgresql_users and postgresql_users|length > 0
 
-- name: "Stage 3. add postgresql replication roles"
+- name: "Stage 3: add postgresql replication roles"
   postgresql_user:
     state: present
     name: "{{ postgresql_streaming_user.name }}"
     encrypted: no
     password: "{{ postgresql_streaming_user.pass }}"
     role_attr_flags: REPLICATION
-  when: postgresql_streaming_user|length > 0
+  when: postgresql_streaming_user and postgresql_streaming_user|length > 0
