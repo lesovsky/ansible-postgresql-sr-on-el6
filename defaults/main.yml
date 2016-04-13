@@ -3,7 +3,7 @@
 # Basic settings
 postgresql_version: 9.4
 
-# Specify database cluster location in case when /var/lib/pgsq/x.y/data directory should be replaced with symlink.
+# Specify database cluster location in case when /var/lib/pgsql/x.y/data directory should be replaced with symlink.
 postgresql_cluster_symlink_src: ""
 
 # Stop postgresql service if started and drop cluster if existing.
