@@ -55,6 +55,6 @@ postgresql_pg_hba_custom:
 postgresql_conf_default_guc:
   - { regexp: "^#?listen_addresses = .*$", guc: "listen_addresses = '*'" }
   - { regexp: "^#?wal_level = .*$", guc: "wal_level = {{'hot_standby'}}" }
-  - { regexp: "^#?max_wal_senders = .*$", guc: "max_wal_senders = {{ 6 }}" }
+  - { regexp: "^#?max_wal_senders = .*$", guc: "max_wal_senders = {{ postgresql_streaming_slaves|length + 1 }}" }
   - { regexp: "^#?wal_keep_segments = .*$", guc: "wal_keep_segments = {{ 256 }}" }
   - { regexp: "^#?hot_standby = .*$", guc: "hot_standby = {{ 'on' }}" }
