@@ -1,30 +1,13 @@
 # file: tasks/install.yml -- install postgresql packages
 
-- name: Check OS support
-  debug: msg="The following OS family {{ ansible_os_family }} {{ ansible_architecture }} is not supported" fail=yes
-  when: not ansible_os_family == "RedHat" or not ansible_architecture == "x86_64"
+- name: "Stage 1: install PostgreSQL on RedHat/CentOS"
+  include: 'install_rhel.yml'
+  when: ansible_os_family == 'RedHat'
 
-- name: Check packet manager support
-  debug: msg="The following packet manager {{ ansible_pkg_mgr }} is not supported" fail=yes
-  when: not ansible_pkg_mgr == "yum"
+- name: "Stage 1: install PostgreSQL on Debian/Ubuntu"
+  include: 'install_deb.yml'
+  when: ansible_os_family == 'Debian'
 
-- name: "Stage 1: install repository package"
-  yum: 
-    state: present
-    pkg: "{{ item.repo }}"
-  when: item.version == "{{ postgresql_version }}"
-  with_items: postgresql_repo_{{ ansible_distribution }}
+- name: 'Stage 1: install Ansible postgresql dependency package'
+  package: state='latest' pkg='python-psycopg2'
 
-- name: "Stage 1: install postgresql packages"
-  yum: 
-    state: latest
-    pkg: "{{ item }}"
-  with_items:
-    - postgresql{{ postgresql_version |replace('.', '') }}-server
-    - python-psycopg2
-
-- name: "Stage 1: install postgresql contrib package"
-  yum: 
-    state: latest
-    pkg: postgresql{{ postgresql_version |replace('.', '') }}-contrib
-  when: postgresql_contrib

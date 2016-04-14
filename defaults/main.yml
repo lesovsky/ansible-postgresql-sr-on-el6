@@ -1,14 +1,13 @@
 # file: defaults/main.yml -- main variables
 
 # Basic settings
-el_version: 7
 postgresql_version: 9.4
 
-# Specify database cluster location in case when /var/lib/pgsq/x.y/data directory should be replaced with symlink.
+# Specify database cluster location in case when /var/lib/pgsql/x.y/data directory should be replaced with symlink.
 postgresql_cluster_symlink_src: ""
 
 # Stop postgresql service if started and drop cluster if existing.
-postgresql_drop_old_cluster: yes
+postgresql_drop_old_cluster: false
 
 # Enable some options for streaming replication purposes
 postgresql_streaming_user:
@@ -19,21 +18,20 @@ postgresql_streaming_slaves:
  - 192.168.122.13
 
 # Specify a directory for the logs if the default directory does not plan to use
-postgresql_log_directory: /var/log/postgresql
+#postgresql_log_directory: /var/log/postgresql
 
 # PostgreSQL users and roles
 postgresql_admin_user: "postgres"
 postgresql_users:
- - { name: "johndoe", pass: "test1234", flags: "LOGIN,SUPERUSER" }
+# - { name: "johndoe", pass: "test1234", flags: "LOGIN,SUPERUSER" }
 
 # PostgreSQL databases and settings. Do not remove template, encoding, collate, ctype options from postgresql_database because it most certainly lead to Ansible role inoperability.
 postgresql_encoding: UTF8
 postgresql_locale: en_US.UTF-8
 postgresql_databases:
- - { name: "db1", owner: "postgres", template: "template0", encoding: "{{ postgresql_encoding }}", collate: "{{ postgresql_locale }}", ctype: "{{ postgresql_locale }}" }
+# - { name: "db1", owner: "postgres", template: "template0", encoding: "{{ postgresql_encoding }}", collate: "{{ postgresql_locale }}", ctype: "{{ postgresql_locale }}" }
 
 # Extensions which will be installed into databases. This list of extensions will be installed to all databases within postgresql_databases.
-postgresql_contrib: yes
 postgresql_extensions:
  - hstore
  - pg_stat_statements
@@ -57,6 +55,6 @@ postgresql_pg_hba_custom:
 postgresql_conf_default_guc:
   - { regexp: "^#?listen_addresses = .*$", guc: "listen_addresses = '*'" }
   - { regexp: "^#?wal_level = .*$", guc: "wal_level = {{'hot_standby'}}" }
-  - { regexp: "^#?max_wal_senders = .*$", guc: "max_wal_senders = {{ 6 }}" }
+  - { regexp: "^#?max_wal_senders = .*$", guc: "max_wal_senders = {{ postgresql_streaming_slaves|length + 1 }}" }
   - { regexp: "^#?wal_keep_segments = .*$", guc: "wal_keep_segments = {{ 256 }}" }
   - { regexp: "^#?hot_standby = .*$", guc: "hot_standby = {{ 'on' }}" }

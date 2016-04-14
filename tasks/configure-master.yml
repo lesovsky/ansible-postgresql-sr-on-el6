@@ -1,11 +1,11 @@
 # file: tasks/configure-master.yml -- postgresql pre-start configuration of master server and startup
 
 - name: "Stage 2: stop old postgresql service"
-  service: name="postgresql-{{ postgresql_version }}" state=stopped
+  service: name="{{ postgresql_service_name }}" state=stopped
   when: postgresql_drop_old_cluster
 
 - name: "Stage 2: remove old postgresql cluster"
-  command: "rm -rf /var/lib/pgsql/{{ postgresql_version }}/data {{ postgresql_cluster_symlink_src }}"
+  file: path="{{ postgresql_data_dir }}" state=absent
   when: postgresql_drop_old_cluster
 
 - name: "Stage 2: cluster directory replacement with symlink, check destination directory"
@@ -20,32 +20,37 @@
 - name: "Stage 2: cluster directory replacement with symlink, create symlink"
   file:
     src: "{{ postgresql_cluster_symlink_src }}"
-    dest: "/var/lib/pgsql/{{ postgresql_version }}/data"
+    dest: "{{ postgresql_data_dir }}"
     state: link
     owner: "{{ postgresql_admin_user }}"
     group: "{{ postgresql_admin_user }}"
   when: postgresql_cluster_symlink_src|length > 0
 
+- name: "Stage 2: check cluster directory"
+  stat: path={{ postgresql_data_dir }}
+  register: postgresql_data_stat
+
 - name: "Stage 2: initialize new postgresql cluster"
   sudo: yes
   sudo_user: "{{ postgresql_admin_user }}"
-  command: "/usr/pgsql-{{ postgresql_version }}/bin/initdb -D /var/lib/pgsql/{{ postgresql_version }}/data"
+  command: "{{ postgresql_exec_dir }}/initdb -D {{ postgresql_data_dir }}"
+  when: postgresql_data_stat.stat.exists == False
 
 - name: "Stage 2: configure pg_hba.conf"
   template:
     src: pg_hba.conf.j2
-    dest: "/var/lib/pgsql/{{ postgresql_version }}/data/pg_hba.conf"
+    dest: "{{ postgresql_conf_dir }}/pg_hba.conf"
     owner: "{{ postgresql_admin_user }}"
     group: "{{ postgresql_admin_user }}"
     mode: 0640
 
 - name: "Stage 2: configure postgresql.conf"
   lineinfile:
-    dest: "/var/lib/pgsql/{{ postgresql_version }}/data/postgresql.conf"
+    dest: "{{ postgresql_conf_dir }}/postgresql.conf"
     state: present
     regexp: "{{ item.regexp }}"
     line: "{{ item.guc }}"
-  with_items: postgresql_conf_default_guc
+  with_items: "{{ postgresql_conf_default_guc }}"
 
 - name: "Stage 2: create postgresql log directory"
   file:
@@ -57,4 +62,4 @@
   when: postgresql_log_directory is defined
 
 - name: "Stage 2: start postgresql service"
-  service: name="postgresql-{{ postgresql_version }}" state=started enabled=yes
+  service: name="{{ postgresql_service_name }}" state=started enabled=yes

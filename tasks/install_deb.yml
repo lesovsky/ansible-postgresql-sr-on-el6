@@ -1,0 +1,8 @@
+# file: tasks/install_deb.yml -- install postgresql packages for Debian/Ubuntu
+---
+- name: "Stage 1: install postgresql package"
+  apt: 
+    state: latest
+    pkg: "{{ item }}"
+  with_items:
+    - postgresql-{{ postgresql_version }}
